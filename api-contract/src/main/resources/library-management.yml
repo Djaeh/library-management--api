@@ -1,0 +1,172 @@
+openapi: 3.0.4
+info:
+  title: API contract for the library manager
+  version: 1.0.0
+  description: |-
+    This API provides endpoints for managing libraries and their operations.
+    Key Capabilities:
+     - Create a new library
+     - Browse libraries
+     - Manage books (Create, delete)
+tags:
+  - name: library
+    description: Manage libraries
+  - name: books
+    description: Manage books for a library
+
+paths:
+  /libraries:
+    get:
+      tags:
+        - library
+      summary: Get list of libraries
+      description: Get the full list of available libraries
+      operationId: getLibraries
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/library'
+    post:
+      tags:
+        - library
+      summary: Add a new library
+      description: Create a new library to be managed
+      operationId: addLibrary
+      requestBody:
+        $ref: '#/components/requestBodies/library'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/library'
+        '400':
+          description: Bad Request
+  /libraries/{libraryId}/books/:
+    parameters:
+      - name: libraryId
+        in: path
+        description: Unique id of the library
+        required: true
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - books
+      summary: Get books by library
+      description: Get books by library
+      operationId: getBooksByLibrary
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/paginatedListOfBooks'
+        '404':
+          description: Not found
+    post:
+      tags:
+        - books
+      summary: Add books to library
+      description: |-
+        Add a list of books to the library. In case of validation failure, no books will be added.
+        The books metadata will be enriched asynchronously using Google books API.
+      operationId: addBooksToLibrary
+      requestBody:
+        description: list of books to be added.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/book'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/book'
+        '404':
+          description: Not found
+
+
+components:
+  schemas:
+    book:
+      description: Model for a book
+      type: object
+      properties:
+        title:
+          type: string
+          example: Frieren tome 1
+        isbn:
+          type: string
+          example: 9782368526064
+    paginatedListOfBooks:
+      type: object
+    library:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+              example: 1
+        - $ref : '#/components/schemas/baseLibrary'
+    baseLibrary:
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: A meaningful name for your library
+          example: personal library
+        address:
+          $ref: '#/components/schemas/address'
+        contact:
+          $ref: '#/components/schemas/contact'
+    contact:
+      type: object
+      properties:
+        firstname:
+          type: string
+          example: Arthur
+        lastname:
+          type: string
+          example: Pendragon
+    address:
+      type: object
+      required:
+        - addressLine1
+      properties:
+        addressLine1:
+          type: string
+          description: First line for the address
+          example: 5 Boulevard du gentleman
+        addressLine2:
+          type: string
+          description: Seconde line for the address
+        addressLine3:
+          type: string
+          description: First line for the address
+        zipCode:
+          type: string
+          example: 75001
+  requestBodies:
+    library:
+      description: Library that needs to be created
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/baseLibrary'
