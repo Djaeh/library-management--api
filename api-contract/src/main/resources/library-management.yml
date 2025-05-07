@@ -28,9 +28,14 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/library'
+                type: object
+                required:
+                  - libraries
+                properties:
+                  libraries:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/library'
     post:
       tags:
         - library

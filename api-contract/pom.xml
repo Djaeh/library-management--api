@@ -71,7 +71,6 @@
                                 ApiUtil.java
                             </supportingFilesToGenerate>
                             <configOptions>
-                                <delegatePattern>true</delegatePattern>
                             </configOptions>
                         </configuration>
                     </execution>
