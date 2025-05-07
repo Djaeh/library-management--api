@@ -1,0 +1,14 @@
+{
+    "id": "#string",
+    "name": "#string",
+    "address": {
+      "addressLine1": "#string",
+      "addressLine2": "##string",
+      "addressLine3": "##string",
+      "zipCode": "#string"
+    },
+    "contact": {
+      "firstname": "##string",
+      "lastname": "##string"
+    }
+  }

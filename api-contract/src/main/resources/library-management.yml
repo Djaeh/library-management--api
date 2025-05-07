@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.0.3
 info:
   title: API contract for the library manager
   version: 1.0.0
@@ -118,8 +118,7 @@ components:
         - type: object
           properties:
             id:
-              type: integer
-              format: int64
+              type: string
               example: 1
         - $ref : '#/components/schemas/baseLibrary'
     baseLibrary:
