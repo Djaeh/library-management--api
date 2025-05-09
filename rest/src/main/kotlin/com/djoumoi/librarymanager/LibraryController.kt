@@ -1,29 +1,38 @@
 package com.djoumoi.librarymanager
 
 import com.djoumoi.librarymanagement.rest.LibrariesApi
-import com.djoumoi.librarymanagement.rest.model.BaseLibrary
-import com.djoumoi.librarymanagement.rest.model.GetLibraries200Response
-import com.djoumoi.librarymanagement.rest.model.Library
+import com.djoumoi.librarymanagement.rest.model.*
+import com.djoumoi.librarymanager.api.AddBookToLibraryApi
 import com.djoumoi.librarymanager.api.CreateLibraryApi
+import com.djoumoi.librarymanager.api.GetBookApi
 import com.djoumoi.librarymanager.api.GetLibraryApi
-import com.djoumoi.librarymanager.model.Address
-import com.djoumoi.librarymanager.model.Contact
+import com.djoumoi.librarymanager.mapper.BookMapper
+import com.djoumoi.librarymanager.mapper.LibraryMapper.Companion.toDomainModel
+import com.djoumoi.librarymanager.mapper.LibraryMapper.Companion.toRestModel
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import javax.validation.Valid
 
+//TODO Global Exception handling with @ExceptionHandler and @ControllerAdvice
 @RestController
 class LibraryController : LibrariesApi {
     @Autowired
     lateinit var getLibraryApi: GetLibraryApi
+
     @Autowired
     lateinit var createLibrary: CreateLibraryApi
 
+    @Autowired
+    lateinit var addBookToLibraryApi: AddBookToLibraryApi
+
+    @Autowired
+    lateinit var getBookApi: GetBookApi
+
     override fun getLibraries(): ResponseEntity<GetLibraries200Response?>? {
         return ResponseEntity.ok(
-            GetLibraries200Response( getLibraryApi.getAllLibrary().map {
+            GetLibraries200Response(getLibraryApi.getAllLibrary().map {
                 toRestModel(it)
 
             })
@@ -40,37 +49,27 @@ class LibraryController : LibrariesApi {
         )
     }
 
-    private fun toDomainModel(baseLibrary: @Valid BaseLibrary?): com.djoumoi.librarymanager.model.Library =
-        if (baseLibrary == null) {
-            throw IllegalArgumentException()
-        } else
-        com.djoumoi.librarymanager.model.Library(
-            null, baseLibrary.name,
-            Address(
-                baseLibrary.address?.addressLine1,
-                baseLibrary.address?.addressLine2,
-                baseLibrary.address?.addressLine3,
-                baseLibrary.address?.zipCode
-            ),
-            Contact(
-                baseLibrary.contact?.firstname,
-                baseLibrary.contact?.lastname
-            )
+    override fun addBookToLibrary(
+        libraryId: String?,
+        book: @Valid Book?
+    ): ResponseEntity<Book?>? {
+        requireNotNull(libraryId)
+        requireNotNull(book)
+        require(book.isbn.isNotBlank())
+        require(book.title.isNotBlank())
+        return ResponseEntity(
+            BookMapper.toRestModel(
+                addBookToLibraryApi.addBookToLibrary(libraryId, BookMapper.toDomain(book))
+            ), HttpStatus.CREATED
         )
+    }
 
-    fun toRestModel(library: com.djoumoi.librarymanager.model.Library): Library {
-        val restLibrary = Library(library.name)
-        restLibrary.id(library.id)
-        val address = com.djoumoi.librarymanagement.rest.model.Address()
-        address.addressLine1 = library.address?.addressLine1
-        address.addressLine2 = library.address?.addressLine2
-        address.addressLine3 = library.address?.addressLine3
-        address.zipCode = library.address?.zipCode
-        restLibrary.address = address
-        val contact = com.djoumoi.librarymanagement.rest.model.Contact()
-        contact.lastname = library.contact?.lastname
-        contact.firstname = library.contact?.firstname
-        restLibrary.contact = contact
-        return restLibrary
+    override fun getBooksByLibrary(libraryId: String?): ResponseEntity<PaginatedListOfBooks?>? {
+        requireNotNull(libraryId)
+        require(libraryId.isNotBlank())
+        return ResponseEntity.ok(
+            PaginatedListOfBooks(
+                getBookApi.getBooksFromLibrary(libraryId).datas.map { BookMapper.toRestModel(it) })
+        )
     }
 }

@@ -1,0 +1,8 @@
+package com.djoumoi.librarymanager.api
+
+import com.djoumoi.librarymanager.model.Book
+import com.djoumoi.librarymanager.model.Page
+
+interface GetBookApi {
+    fun getBooksFromLibrary(libraryId:String):Page<Book>
+}

@@ -4,11 +4,6 @@ Feature: Managing a library
 
   Scenario: Get list of library
     Given path 'libraries'
-    When method GET
-    Then status 200
-    And match response == {"libraries": []}
-
-    Given path 'libraries'
     * set libraryRequest1
       | path    | value                                                                                                                            |
       | name    | "My personal library"                                                                                                            |

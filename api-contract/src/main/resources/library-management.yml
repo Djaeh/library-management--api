@@ -45,7 +45,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/library'
       responses:
-        '200':
+        '201':
           description: Successful operation
           content:
             application/json:
@@ -53,15 +53,14 @@ paths:
                 $ref: '#/components/schemas/library'
         '400':
           description: Bad Request
-  /libraries/{libraryId}/books/:
+  /libraries/{libraryId}/books:
     parameters:
       - name: libraryId
         in: path
         description: Unique id of the library
         required: true
         schema:
-          type: integer
-          format: int64
+          type: string
     get:
       tags:
         - books
@@ -80,26 +79,24 @@ paths:
     post:
       tags:
         - books
-      summary: Add books to library
+      summary: Add book to library
       description: |-
-        Add a list of books to the library. In case of validation failure, no books will be added.
+        Add a book to the library.
         The books metadata will be enriched asynchronously using Google books API.
-      operationId: addBooksToLibrary
+      operationId: addBookToLibrary
       requestBody:
-        description: list of books to be added.
+        description: books to be added.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/book'
       responses:
-        '200':
+        '201':
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/book'
+                 $ref: '#/components/schemas/book'
         '404':
           description: Not found
 
@@ -118,6 +115,13 @@ components:
           example: 9782368526064
     paginatedListOfBooks:
       type: object
+      required:
+        - books
+      properties:
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/book'
     library:
       allOf:
         - type: object
