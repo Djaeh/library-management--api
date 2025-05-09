@@ -2,6 +2,6 @@ package com.djoumoi.librarymanager.api
 
 import com.djoumoi.librarymanager.model.Library
 
-interface GetLibraryApi {
+fun interface GetLibraryApi {
     fun getAllLibrary(): List<Library>
 }

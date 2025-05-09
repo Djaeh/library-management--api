@@ -27,6 +27,7 @@
         <module>rest</module>
         <module>driven-mongo</module>
         <module>bootstrap</module>
+        <module>google-api</module>
     </modules>
     <scm>
         <connection/>

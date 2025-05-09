@@ -18,13 +18,29 @@ class BookOperationAdapter : BookOperationSpi {
         libraryId: String,
         book: Book
     ): Book {
-        val bookEntity = bookRepository.findByIsbn(book.isbn)?: BookEntity(name = book.name, isbn = book.isbn, mutableSetOf())
+        val bookEntity = bookRepository.findByIsbn(book.isbn)?: BookEntity(displayName = book.displayName,
+            isbn = book.isbn,
+            libraries = mutableSetOf(),
+            title = book.title,
+            authors = book.authors,
+            publisher = book.publisher,
+            publishedDate = book.publishedDate,
+            description = book.description,
+            googlePreviewLink = book.googlePreviewLink
+        )
         bookEntity.libraries.add(libraryId)
         return toDomain(bookRepository.save(bookEntity))
     }
 
     private fun toDomain(bookEntity: BookEntity): Book {
-        return Book(name = bookEntity.name, isbn = bookEntity.isbn)
+        return Book(displayName = bookEntity.displayName,
+            isbn = bookEntity.isbn,
+            title = bookEntity.title,
+            authors = bookEntity.authors,
+            publisher = bookEntity.publisher,
+            publishedDate = bookEntity.publishedDate,
+            description = bookEntity.description,
+            googlePreviewLink = bookEntity.googlePreviewLink)
     }
 
     // TODO: Implement pagination

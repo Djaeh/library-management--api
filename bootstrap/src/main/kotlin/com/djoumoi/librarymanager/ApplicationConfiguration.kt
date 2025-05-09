@@ -8,6 +8,7 @@ import com.djoumoi.librarymanager.api.implementations.AddBookToLibraryService
 import com.djoumoi.librarymanager.api.implementations.CreateLibraryService
 import com.djoumoi.librarymanager.api.implementations.GetBookService
 import com.djoumoi.librarymanager.api.implementations.GetLibraryService
+import com.djoumoi.librarymanager.spi.BookInfoFromExternalSource
 import com.djoumoi.librarymanager.spi.BookOperationSpi
 import com.djoumoi.librarymanager.spi.LibraryOperationSpi
 import org.springframework.context.annotation.Bean
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class ApplicationConfiguration {
 
-
+    // If we really want to be rigorous RestController, Repository, Components... should also be manually created here
     @Bean
     fun createLibraryApi(libraryOperationSpi: LibraryOperationSpi): CreateLibraryApi {
         return CreateLibraryService(libraryOperationSpi)
@@ -33,7 +34,7 @@ class ApplicationConfiguration {
     }
 
     @Bean
-    fun addBookToLibraryApi(bookOperationSpi: BookOperationSpi) : AddBookToLibraryApi {
-        return AddBookToLibraryService(bookOperationSpi)
+    fun addBookToLibraryApi(bookOperationSpi: BookOperationSpi, bookInfoFromExternalSource: BookInfoFromExternalSource) : AddBookToLibraryApi {
+        return AddBookToLibraryService(bookOperationSpi, bookInfoFromExternalSource)
     }
 }

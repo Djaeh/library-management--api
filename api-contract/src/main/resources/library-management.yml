@@ -89,7 +89,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/book'
+              $ref: '#/components/schemas/bookAddRequest'
       responses:
         '201':
           description: successful operation
@@ -103,16 +103,49 @@ paths:
 
 components:
   schemas:
-    book:
-      description: Model for a book
+    bookAddRequest:
       type: object
       properties:
-        title:
+        displayName:
           type: string
           example: Frieren tome 1
         isbn:
           type: string
           example: 9782368526064
+    book:
+      description: Model for a book
+      type: object
+      properties:
+        displayName:
+          type: string
+          example: Magi tome 28
+        isbn:
+          type: string
+          example: 9782368526064
+        title:
+          type: string
+          example: Magi
+        authors:
+          type: array
+          description: List of author involved in the book
+          items:
+            format: string
+          example: ["Shinobu Othaka"]
+        publisher:
+          type: string
+          example: Kurokawa
+        publishedDate:
+          ## TODO manage date as actual Date structure instead of string
+          type: string
+          example: 2018-04-12
+        description:
+          type: string
+          example: Magi tome 28
+        googlePreviewLink:
+          type: string
+          format: url
+          description: link to the google book page for the specific book
+          example:  "http://books.google.fr/books?id=YV7otQEACAAJ&dq=isbn:9782368526064&hl=&cd=1&source=gbs_api"
     paginatedListOfBooks:
       type: object
       required:

@@ -1,6 +1,7 @@
 package com.djoumoi.librarymanager.mapper
 
 import com.djoumoi.librarymanager.model.Book
+import com.djoumoi.librarymanager.model.BookAddRequest
 
 class BookMapper {
 
@@ -8,12 +9,18 @@ class BookMapper {
         fun toRestModel(book: Book) : com.djoumoi.librarymanagement.rest.model.Book {
             val bookRest = com.djoumoi.librarymanagement.rest.model.Book()
             bookRest.isbn = book.isbn
-            bookRest.title = book.name
+            bookRest.displayName = book.displayName
+            bookRest.title = book.title
+            bookRest.authors = book.authors.toList()
+            bookRest.publisher = book.publisher
+            bookRest.publishedDate = book.publishedDate
+            bookRest.description = book.description
+            bookRest.googlePreviewLink = book.googlePreviewLink
             return bookRest
         }
 
-        fun toDomain(book: com.djoumoi.librarymanagement.rest.model.Book): Book {
-            return Book(book.title, book.isbn)
+        fun toDomain(book: com.djoumoi.librarymanagement.rest.model.BookAddRequest): BookAddRequest {
+            return BookAddRequest(book.displayName, book.isbn)
         }
     }
 }

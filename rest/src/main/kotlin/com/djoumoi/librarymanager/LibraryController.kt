@@ -51,15 +51,15 @@ class LibraryController : LibrariesApi {
 
     override fun addBookToLibrary(
         libraryId: String?,
-        book: @Valid Book?
+        bookAddRequest: @Valid BookAddRequest?
     ): ResponseEntity<Book?>? {
         requireNotNull(libraryId)
-        requireNotNull(book)
-        require(book.isbn.isNotBlank())
-        require(book.title.isNotBlank())
+        requireNotNull(bookAddRequest)
+        require(bookAddRequest.isbn.isNotBlank())
+        require(bookAddRequest.displayName.isNotBlank())
         return ResponseEntity(
             BookMapper.toRestModel(
-                addBookToLibraryApi.addBookToLibrary(libraryId, BookMapper.toDomain(book))
+                addBookToLibraryApi.addBookToLibrary(libraryId, BookMapper.toDomain(bookAddRequest))
             ), HttpStatus.CREATED
         )
     }
